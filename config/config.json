@@ -19,5 +19,20 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "siknet": {
+    "username": "user33",
+    "password": "Password1234",
+    "database": "siknet_rs",
+    "host": "172.18.38.50",
+    "dialect": "mssql"
+  },
+  "simrs": {
+    "username": "admin",
+    "password": "admin",
+    "database": "rsudc",
+    "host": "192.168.200.12",
+    "dialect": "postgres"
   }
+  
 }
