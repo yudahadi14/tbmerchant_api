@@ -4,6 +4,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 const routeDoctor = require("./routes/api/doctor");
+const routeSimrs = require("./routes/api/simrs");
 // const routeService = require("./routes/api/service");
 
 let port = 5001;
@@ -24,6 +25,7 @@ app.options("*", cors());
 // });
 app.use(express.json());
 app.use("/api/doctor", routeDoctor);
+app.use("/api/simrs", routeSimrs);
 // app.use("/api/service", routeService);
 
 app.use(function (req, res, next) {
