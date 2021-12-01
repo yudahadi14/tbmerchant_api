@@ -4,6 +4,26 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 const routeDoctor = require("./routes/api/doctor");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+// const swaggerDocument = require('./swagger.json');
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Library API",
+      version: "1.0.0",
+      description: "RSUDC API",
+    },
+    servers: [
+      {
+        url: "http://localhost:5001/api",
+      },
+    ],
+  },
+  apis: ["./routes/api/*.js"],
+};
+const specs = swaggerJsDoc(options);
 const routeSimrs = require("./routes/api/simrs");
 // const routeService = require("./routes/api/service");
 
@@ -27,7 +47,7 @@ app.use(express.json());
 app.use("/api/doctor", routeDoctor);
 app.use("/api/simrs", routeSimrs);
 // app.use("/api/service", routeService);
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use(function (req, res, next) {
   res.status(404).send("Oops! Where are you going ?");
 });

@@ -1,0 +1,18 @@
+{
+  "swagger": "2.0",
+  "definition": {
+    "info": {
+      "title": "Library API",
+      "version": "1.0.0",
+      "description": "RSUDC API"
+    }
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Users",
+      "description": "API for user in the system"
+    }
+  ]
+}
