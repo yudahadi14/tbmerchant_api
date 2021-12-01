@@ -24,6 +24,9 @@ const options = {
   apis: ["./routes/api/*.js"],
 };
 const specs = swaggerJsDoc(options);
+const routeSimrs = require("./routes/api/simrs");
+// const routeService = require("./routes/api/service");
+
 let port = 5001;
 const app = express();
 // const corsOpt = {
@@ -42,6 +45,7 @@ app.options("*", cors());
 // });
 app.use(express.json());
 app.use("/api/doctor", routeDoctor);
+app.use("/api/simrs", routeSimrs);
 // app.use("/api/service", routeService);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use(function (req, res, next) {

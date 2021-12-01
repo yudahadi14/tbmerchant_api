@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "user33",
+    "password": "Password1234",
+    "database": "siknet_rs",
+    "host": "172.18.38.50",
+    "dialect": "mssql"
+    }
+}
+  
