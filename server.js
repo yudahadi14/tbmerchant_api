@@ -56,7 +56,7 @@ app.use(function (req, res, next) {
 });
 
 if (process.env.NODE_ENV === "production") {
-  port = 2001;
+  port = 5001;
   app.use(express.static("client/build"));
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
