@@ -27,7 +27,7 @@ from
 where 
   thn = :tahun 
   and aktif = true 
-  and blnint1 = :periode
+  and blnint1 = :bulan
   ${req.query.peg_id ? "and peg_id = :peg_id" : ""} 
 order by 
   ref_layanan_nama, 
@@ -38,7 +38,7 @@ order by
   return models.sequelize
     .query(query, {
       replacements: {
-        periode: req.query.periode,
+        bulan: req.query.bulan,
         tahun: req.query.tahun,
         peg_id: req.query.peg_id,
       },
