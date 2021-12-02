@@ -17,7 +17,10 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5001/api",
+        url:
+          process.env.NODE_ENV === "production"
+            ? "http://api.rsudcengkareng.com:5001/api"
+            : "http://localhost:5001/api",
       },
     ],
   },
