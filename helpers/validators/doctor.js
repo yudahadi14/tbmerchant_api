@@ -1,7 +1,7 @@
 const { query, validationResult, oneOf, header } = require("express-validator");
 
 exports.getJadwal = [
-  query("periode").notEmpty().withMessage("Mohon isi periode!."),
+  query("bulan").notEmpty().withMessage("Mohon isi bulan!."),
   query("tahun").notEmpty().withMessage("Mohon isi tahun!."),
   (req, res, next) => {
     const errors = validationResult(req);
