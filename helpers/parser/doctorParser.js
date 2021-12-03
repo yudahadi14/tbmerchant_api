@@ -16,9 +16,13 @@ exports.parseJadwal = (payload) => {
               periode: element.periode,
               ref_layanan_id: element.ref_layanan_id,
               ref_layanan_nama: element.ref_layanan_nama,
-              jam_praktek_mulai: element.jam_praktek_mulai,
-              jam_praktek_akhir: element.jam_praktek_akhir,
-              jadwal: []
+              jadwal: [
+                {
+                  hari_praktek: element.hari_praktek,
+                  jam_praktek_mulai: element.jam_praktek_mulai,
+                  jam_praktek_akhir: element.jam_praktek_akhir,
+                },
+              ],
             });
         }     
     });
