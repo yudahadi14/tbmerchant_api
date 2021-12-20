@@ -3,7 +3,7 @@
     "username": "admin",
     "password": "admin",
     "database": "rsudc",
-    "host": "192.168.200.200",
+    "host": "192.168.200.11",
     "dialect": "postgres"
   },
   "test": {
