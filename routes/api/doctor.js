@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const {
   jadwalDokter, listDokter,
+  listPoli
 } = require("../../controllers/api/doctorController");
 const { getJadwal } = require("../../helpers/validators/doctor");
 
 router.get("/jadwal", getJadwal, jadwalDokter);
+router.get("/poli", listPoli);
 
 /**
  * @swagger 

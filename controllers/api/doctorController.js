@@ -97,3 +97,23 @@ order by
       return success(req, res, payload);
     });
 };
+
+
+exports.listPoli = (req, res) => {
+  const query = `
+    select jpd.id_poli, rl.ref_layanan_nama from
+    ref_layanan rl 
+    inner join jadwal_praktek_dokter jpd on rl.ref_layanan_id = jpd.id_poli 
+    group by jpd.id_poli, rl.ref_layanan_nama `;
+
+  return models.sequelize
+    .query(query, {
+      type: QueryTypes.SELECT,
+    })
+    .then((payload) => {
+      return success(req, res, payload);
+    })
+    .catch((err) => {
+      return error(req, res, err, null);
+    });
+};
