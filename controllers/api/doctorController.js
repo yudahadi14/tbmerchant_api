@@ -5,12 +5,12 @@ const { success, error } = require("../../helpers/utility/response");
 
 exports.jadwalDokter = (req, res) => {
   const query = `
-  select 
+SELECT 
   cast(
     (
       periodeawal || '-' || periodeakhir || '  ' || thn
     ) as varchar (100)
-  ) as periode, 
+  ) AS periode, 
   id, 
   peg_id,
   peg_nama, 
@@ -20,17 +20,18 @@ exports.jadwalDokter = (req, res) => {
   jam_praktek_mulai, 
   jam_praktek_akhir, 
   jam_praktek_lainnya 
-from 
+FROM 
   jadwal_praktek_dokter 
-  left join pegawai on peg_id = id_dokter 
-  left join ref_layanan on ref_layanan_id = id_poli 
-where 
+  left join pegawai ON peg_id = id_dokter 
+  left join ref_layanan ON ref_layanan_id = id_poli 
+WHERE 
   thn = :tahun 
   and aktif = true 
   and blnint1 = :bulan1
   and blnint2 = :bulan2
+  and peg_nama not in ('ga ad nama', 'DOKTER RSUD', 'FISIOTHERAPIST')
   ${req.query.peg_id ? "and peg_id = :peg_id" : ""} 
-order by 
+ORDER BY 
   ref_layanan_nama, 
   peg_nama, 
   CASE WHEN hari_praktek = 'Senin' THEN 1 WHEN hari_praktek = 'Selasa' THEN 2 WHEN hari_praktek = 'Rabu' THEN 3 WHEN hari_praktek = 'Kamis' THEN 4 WHEN hari_praktek = 'Jumat' THEN 5 WHEN hari_praktek = 'Sabtu' THEN 6 WHEN hari_praktek = 'Minggu' THEN 7 END ASC
@@ -70,6 +71,7 @@ from
   left join ref_layanan rl on rl.ref_layanan_id = jpd.id_poli 
 where 
   UPPER(p.peg_nama) like UPPER(:nama_dokter)
+  AND peg_nama not in ('ga ad nama', 'DOKTER RSUD', 'FISIOTHERAPIST')
   AND 
   ${
     req.query.layanan_id
@@ -98,13 +100,22 @@ order by
     });
 };
 
-
 exports.listPoli = (req, res) => {
   const query = `
-    select jpd.id_poli, rl.ref_layanan_nama from
-    ref_layanan rl 
-    inner join jadwal_praktek_dokter jpd on rl.ref_layanan_id = jpd.id_poli 
-    group by jpd.id_poli, rl.ref_layanan_nama `;
+SELECT 
+  jpd.id_poli, 
+  rl.ref_layanan_nama 
+FROM 
+  ref_layanan rl 
+  INNER JOIN jadwal_praktek_dokter jpd ON rl.ref_layanan_id = jpd.id_poli
+WHERE rl.ref_layanan_nama not in ('---', 'USG 4D')
+GROUP BY 
+  jpd.id_poli, 
+  rl.ref_layanan_nama 
+ORDER BY 
+  rl.ref_layanan_nama ASC
+
+    `;
 
   return models.sequelize
     .query(query, {
