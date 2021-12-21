@@ -71,6 +71,7 @@ from
   left join ref_layanan rl on rl.ref_layanan_id = jpd.id_poli 
 where 
   UPPER(p.peg_nama) like UPPER(:nama_dokter)
+  AND peg_nama not in ('ga ad nama', 'DOKTER RSUD', 'FISIOTHERAPIST')
   AND 
   ${
     req.query.layanan_id
@@ -106,7 +107,8 @@ SELECT
   rl.ref_layanan_nama 
 FROM 
   ref_layanan rl 
-  INNER JOIN jadwal_praktek_dokter jpd ON rl.ref_layanan_id = jpd.id_poli 
+  INNER JOIN jadwal_praktek_dokter jpd ON rl.ref_layanan_id = jpd.id_poli
+WHERE rl.ref_layanan_nama not in ('---', 'USG 4D')
 GROUP BY 
   jpd.id_poli, 
   rl.ref_layanan_nama 
