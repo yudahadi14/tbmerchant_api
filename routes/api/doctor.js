@@ -1,32 +1,35 @@
 const express = require("express");
 const router = express.Router();
 const {
-  jadwalDokter, listDokter,
-  listPoli
+  jadwalDokter,
+  listDokter,
+  listPoli,
+  fotoDokter,
+  postJadwal,
 } = require("../../controllers/api/doctorController");
-const { getJadwal } = require("../../helpers/validators/doctor");
-
+const { error } = require("../../helpers/utility/response");
+const upload = require("../../helpers/utility/uploads");
+const { getJadwal, postFoto } = require("../../helpers/validators/doctor");
 router.get("/jadwal", getJadwal, jadwalDokter);
 router.get("/poli", listPoli);
-
 /**
- * @swagger 
+ * @swagger
  * components:
- *    schemas: 
+ *    schemas:
  *      Response:
  *        type: object
  *        properties:
- *          status: 
+ *          status:
  *            type: string
  *            description: Auto
- *          message: 
+ *          message:
  *            type: string
  *            description: Auto
- *          data: 
+ *          data:
  *            type: array
  *            items:
  *              type: object
- * 
+ *
  */
 
 /**
@@ -61,12 +64,11 @@ router.get("/poli", listPoli);
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/Response'
- *              
- *              
+ *
+ *
  */
 
 router.get("/list", listDokter);
-
 
 /**
  * @swagger
@@ -95,10 +97,26 @@ router.get("/list", listDokter);
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/Response'
- *              
- *              
+ *
+ *
  */
+const single = upload("doctors").single("file");
 
+router.post(
+  "/foto-dokter",
+  (req, res, next) =>
+    single(req, res, (err) => {
+      if(err) {
+        return error(req, res, [], err.message);
+      }
+      next();
+    }),
+  postFoto,
+  fotoDokter
+);
 
+router.post(
+  "/jadwal-dokter", postFoto, postJadwal
+);
 
 module.exports = router;

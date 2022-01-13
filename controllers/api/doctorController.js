@@ -128,3 +128,149 @@ ORDER BY
       return error(req, res, err, null);
     });
 };
+
+exports.postJadwal = (req, res) => {
+  const findQ = `
+SELECT * FROM jadwal_praktek_dokter
+WHERE
+ id_dokter = :peg_id
+ AND hari_praktek = :hari_praktek
+ AND jam_praktek_mulai = :jam_praktek_mulai
+ AND jam_praktek_akhir = :jam_praktek_akhir
+ AND periodeawal = :periodeawal
+ AND periodeakhir = :periodeakhir
+ AND thn = :thn
+ AND blnint1 = :blnint1
+ AND blnint2 = :blnint2 
+ AND id_poli = :id_poli
+LIMIT 1;
+  `;
+  const insQ = `
+  insert into jadwal_praktek_dokter (
+    id_dokter, hari_praktek, jam_praktek_mulai, 
+    jam_praktek_akhir, id_poli, periodeawal, 
+    periodeakhir, tgl_input, thn, blnint1, 
+    blnint2, aktif
+  ) 
+  values 
+  (
+    :peg_id, :hari_praktek, :jam_praktek_mulai, :jam_praktek_akhir, 
+    :id_poli, :periodeawal, :periodeakhir, now(), :thn, 
+    :blnint1, :blnint2, true
+  )
+  `;
+  const {
+    peg_id,
+    hari_praktek,
+    jam_praktek_mulai,
+    jam_praktek_akhir,
+    periodeawal,
+    periodeakhir,
+    blnint1,
+    blnint2,
+    id_poli,
+    thn,
+  } = req.body;
+
+  return models.sequelize
+    .query(findQ, {
+      type: QueryTypes.SELECT,
+      replacements: {
+        peg_id: peg_id,
+        hari_praktek: hari_praktek,
+        jam_praktek_mulai: jam_praktek_mulai,
+        jam_praktek_akhir: jam_praktek_akhir,
+        periodeawal: periodeawal,
+        periodeakhir: periodeakhir,
+        blnint1: blnint1,
+        blnint2: blnint2,
+        id_poli: id_poli,
+        thn: thn,
+      },
+    })
+    .then((jadwal) => {
+      console.log(jadwal);
+      if (jadwal.length > 0) {
+        throw new Error("Jadwal sudah ada.");
+      }
+      return models.sequelize.query(insQ, {
+        type: QueryTypes.INSERT,
+        replacements: {
+          peg_id: peg_id,
+          hari_praktek: hari_praktek,
+          jam_praktek_mulai: jam_praktek_mulai,
+          jam_praktek_akhir: jam_praktek_akhir,
+          periodeawal: periodeawal,
+          periodeakhir: periodeakhir,
+          blnint1: blnint1,
+          blnint2: blnint2,
+          id_poli: id_poli,
+          thn: thn,
+        },
+      });
+    })
+    .then((payload) => {
+      return success(req, res, payload);
+    })
+    .catch((err) => {
+      return error(req, res, err, err.message);
+    });
+};
+
+exports.fotoDokter = (req, res) => {
+  const file = req.file;
+  const { filename } = req.file;
+  const { peg_id } = req.body;
+  if (!file) {
+    return error(req, res, "Error", null);
+  }
+  const findQ = `SELECT * FROM foto_dokter WHERE peg_id = :peg_id LIMIT 1`;
+  const insQ = `
+        INSERT INTO foto_dokter (peg_id, filename)
+        VALUES (:peg_id, :filename)
+      `;
+  const updQ = `
+        UPDATE foto_dokter SET filename = :filename WHERE peg_id = :peg_id
+      `;
+  return models.sequelize
+    .query(findQ, {
+      type: QueryTypes.SELECT,
+      replacements: {
+        peg_id: peg_id,
+      },
+    })
+    .then((payload) => {
+      if (payload.data) {
+        return models.sequelize.query(updQ, {
+          type: QueryTypes.UPDATE,
+          replacements: {
+            peg_id: peg_id,
+            filename: filename,
+          },
+        });
+      } else {
+        return models.sequelize.query(insQ, {
+          type: QueryTypes.INSERT,
+          replacements: {
+            peg_id: peg_id,
+            filename: filename,
+          },
+        });
+      }
+    })
+    .then(() => {
+      return models.sequelize.query(findQ, {
+        type: QueryTypes.SELECT,
+        replacements: {
+          peg_id: peg_id,
+        },
+      });
+    })
+    .then((payload) => {
+      return success(req, res, payload);
+    })
+    .catch((err) => {
+      return error(req, res, err, null);
+    });
+};
+
