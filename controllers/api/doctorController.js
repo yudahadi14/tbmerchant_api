@@ -274,3 +274,6 @@ exports.fotoDokter = (req, res) => {
     });
 };
 
+exports.cobaFoto = () =>{
+  
+}
