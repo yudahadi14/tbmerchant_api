@@ -5,7 +5,7 @@ const { error } = require("../helpers/utility/response");
 const uploadID = (req, res, next) => {
   let { filePhoto, jenisIdnomor } = req.body;
 let fileName = jenisIdnomor + "_" + Date.now();
-let fileName = jenisIdnomor;
+// let fileName = jenisIdnomor;
 
   return base64ToFile(filePhoto, "/identitas/" + fileName)
     .then(() => {
