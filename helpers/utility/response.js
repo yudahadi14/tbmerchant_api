@@ -17,8 +17,10 @@ exports.error = (
   res,
   data = null,
   message = "Ada Kesalahan",
-  status = 400
+  status = 400,
+  err
 ) => {
+  console.log("-------------------Error Stack:", err);
   return res.json({
     status: status,
     message: message,
