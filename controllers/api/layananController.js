@@ -1,4 +1,5 @@
-var models = require("../../models");
+const models = require("../../models");
+const modelsDev = require("../../models_dev");
 const { QueryTypes } = require("sequelize");
 const { parseJadwal } = require("../../helpers/parser/doctorParser");
 const { success, error } = require("../../helpers/utility/response");
@@ -84,7 +85,7 @@ exports.daftarBaru = (req, res) => {
     // regpsonline_penjamin_subjenis: 0,
     // regpsonline_id_pasien_ps_id: null,
   };
-  return models.pasienonline
+  return modelsDev.pasienonline
     .create({
       regpsonline_id_jns_id: jenisId || null,
       regpsonline_id_jns_id_nomor: jenisIdnomor || null,
