@@ -1,12 +1,12 @@
 var DataTypes = require("sequelize").DataTypes;
-var _asp_ref_status_nikah = require("./asp_ref_status_nikah");
+var _pasienonline = require("./pasienonline");
 
 function initModels(sequelize) {
-  var asp_ref_status_nikah = _asp_ref_status_nikah(sequelize, DataTypes);
+  var pasienonline = _pasienonline(sequelize, DataTypes);
 
 
   return {
-    asp_ref_status_nikah,
+    pasienonline,
   };
 }
 module.exports = initModels;

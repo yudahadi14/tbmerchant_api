@@ -58,7 +58,8 @@ app.options("*", cors());
 
 //START API
 app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.json());
 app.use("/api/doctor", routeDoctor);
 app.use("/api/simrs", routeSimrs);
 app.use("/api/auth", apiAuth);
@@ -85,6 +86,7 @@ app.use(function (req, res, next) {
 app.listen(port, () => {
   console.log("Server Running : ", port);
 });
+// sequelize-auto -h 192.168.200.200 -d rsudc -u admin -x admin   --dialect postgres -c ./config/config.js -o ./models -t billing_va_dki
 
 models.sequelize
   // .sync()
@@ -98,3 +100,13 @@ models.sequelize
   .catch((err) => {
     console.log(err);
   });
+
+let whereAddOn = {
+  ref_prod_nama: ["Vaksinasi Meningitis", "Vaksinasi Influenza"],
+};
+
+console.log({
+  where: {
+    ...whereAddOn,
+  },
+});
