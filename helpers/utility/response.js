@@ -12,7 +12,7 @@ log4js.configure({
     },
   },
   categories: {
-    default: { appenders: ["app"], level: "error" },
+    default: { appenders: ["app", "log"], level: "error" },
     log: {
       appenders: ["log"],
       level: "all"
