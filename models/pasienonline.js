@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     regpsonline_nilaiyakin: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     regpsonline_textnilaiyakin: {
       type: DataTypes.STRING(300),
@@ -169,6 +169,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     regpsonline_id_pasien_ps_id: {
       type: DataTypes.BIGINT,
+      allowNull: true
+    },
+    regpsonline_produk_id: {
+      type: DataTypes.INTEGER,
       allowNull: true
     }
   }, {
