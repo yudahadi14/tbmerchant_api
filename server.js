@@ -57,7 +57,7 @@ app.options("*", cors());
 // });
 
 //START API
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/doctor", routeDoctor);
 app.use("/api/simrs", routeSimrs);
