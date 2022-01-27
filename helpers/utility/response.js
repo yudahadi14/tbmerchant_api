@@ -11,9 +11,17 @@ log4js.configure({
       type: "console",
     },
   },
-  categories: { default: { appenders: ["app", "log"], level: "all" } },
+  categories: {
+    default: { appenders: ["app"], level: "error" },
+    log: {
+      appenders: ["log"],
+      level: "all"
+    },
+  },
 });
+
 let logger = log4js.getLogger("app");
+let loggerConsole = log4js.getLogger("log");
 
 exports.success = (
   req,
@@ -22,7 +30,7 @@ exports.success = (
   message = "Berhasil",
   status = 200
 ) => {
-  // logger.info(message);
+  loggerConsole.info(message);
   return res.json({
     status: status,
     message: message,
