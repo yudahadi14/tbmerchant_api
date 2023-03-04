@@ -7,6 +7,8 @@ const routeDoctor = require("./routes/api/doctor");
 const apiAuth = require("./routes/api/auth");
 const apiLayanan = require("./routes/api/layanan");
 const apiMaster = require("./routes/api/master");
+const apiLab = require("./routes/api/lab");
+const apiRad = require("./routes/api/rad");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 const bodyParser = require("body-parser");
@@ -25,7 +27,7 @@ const options = {
         url:
           process.env.NODE_ENV === "production"
             ? "http://api.rsudcengkareng.com:5001/api"
-            : "http://localhost:5001/api",
+            : "http://172.18.38.164:5001/api",
       },
     ],
   },
@@ -65,6 +67,8 @@ app.use("/api/simrs", routeSimrs);
 app.use("/api/auth", apiAuth);
 app.use("/api/layanan", apiLayanan);
 app.use("/api/master", apiMaster);
+app.use("/api/lab", apiLab);
+app.use("/api/rad", apiRad);
 
 //SWAGGER
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
