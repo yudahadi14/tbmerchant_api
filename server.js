@@ -2,9 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
+
 dotenv.config();
 // const routeDoctor = require("./routes/api/doctor");
-// const apiAuth = require("./routes/api/auth");
+const apiAuth = require("./routes/api/auth");
+let apiSignup = require("./routes/api/tbmerchant/signup");
+let apiMakanan = require("./routes/api/tbmerchant/makanan");
 // const apiLayanan = require("./routes/api/layanan");
 // const apiMaster = require("./routes/api/master");
 // const apiLab = require("./routes/api/lab");
@@ -12,7 +15,7 @@ dotenv.config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 const bodyParser = require("body-parser");
-// const models = require("./models");
+const models = require("./models");
 // const swaggerDocument = require('./swagger.json');
 const options = {
   definition: {
@@ -26,8 +29,8 @@ const options = {
       {
         url:
           process.env.NODE_ENV === "production"
-            ? ""
-            : "http://127.0.0.1:5001/api",
+            ? "http://0.0.0.0:3000"
+            : "http://0.0.0.0:3000",
       },
     ],
   },
@@ -39,7 +42,7 @@ const auth = require("./middleware/authMid");
 const base64ToFile = require("./helpers/utility/base64ToFile");
 // const routeService = require("./routes/api/service");
 
-let port = 5001;
+let port = 3003;
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -50,21 +53,24 @@ app.set("views", path.join(__dirname, "views"));
 // };
 app.use(cors());
 app.options("*", cors());
-// app.use(function (req, res, next) {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-//   res.setHeader("Access-Control-Allow-Credentials", true);
-//   next();
-// });
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
 
 //START API
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+//app.use(express.json());
 // app.use("/api/doctor", routeDoctor);
 // app.use("/api/simrs", routeSimrs);
-// app.use("/api/auth", apiAuth);
+app.use("/api/auth", apiAuth);
+app.use("/api/merchant", apiSignup);
+app.use("/api/merchant/makanan", apiMakanan);
 // app.use("/api/layanan", apiLayanan);
 // app.use("/api/master", apiMaster);
 // app.use("/api/lab", apiLab);
@@ -90,8 +96,6 @@ app.use(function (req, res, next) {
 app.listen(port, () => {
   console.log("Server Running : ", port);
 });
-// sequelize-auto -h 192.168.200.200 -d rsudc -u admin -x admin   --dialect postgres -c ./config/config.js -o ./models -t billing_va_dki
-
 // models.sequelize
 //   // .sync()
 //   .authenticate()
@@ -104,24 +108,7 @@ app.listen(port, () => {
 //   .catch((err) => {
 //     console.log(err);
 //   });
-const mysql = require('mysql');
-var connectionn = mysql.createConnection({
-  host: "tbi-db.cj6xy2r6pcji.ap-southeast-3.rds.amazonaws.com",
-  user: "admin",
-  password: "rDPWrEPniw9gOXi0AZbp",
-  port: "3306",
-  database: "tb_merchant"
-});
 
-connectionn.connect(function (err){
-  if(err)
-  {
-    console.log('Database Connection Error' + err.stack);
-  }else{
-    console.log('Connect to Database');
-  }
-  
-});
 
 // let whereAddOn = {
 //   ref_prod_nama: ["Vaksinasi Meningitis", "Vaksinasi Influenza"],

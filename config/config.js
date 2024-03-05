@@ -5,5 +5,11 @@ module.exports = {
     database: process.env.DEV_DB_RDS_NAME,
     host: process.env.DEV_DB_RDS_HOSTNAME,
     dialect: process.env.DEV_DB_DIALECT_SIM,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
   },
 };

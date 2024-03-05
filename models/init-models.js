@@ -1,12 +1,12 @@
 var DataTypes = require("sequelize").DataTypes;
-// var _lis_header = require("./lis_header");
+var _user_devicelog = require("./user_devicelog");
 
 function initModels(sequelize) {
-  //var lis_header = _lis_header(sequelize, DataTypes);
+  var user_devicelog = _user_devicelog(sequelize, DataTypes);
 
 
   return {
-   // lis_header,
+    user_devicelog,
   };
 }
 module.exports = initModels;
