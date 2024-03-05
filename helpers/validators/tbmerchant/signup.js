@@ -92,4 +92,62 @@ exports.validlupaPasswordKode = [
     },
   ];
 
+exports.validupdateprofile = [
+    body("fullname").notEmpty().withMessage("Mohon isi Full Name / Merchant!."),
+    body("email").notEmpty().withMessage("Mohon isi Email Anda."),
+    body("notelp").notEmpty().withMessage("Mohon isi No Telepon Anda."),
+    (req, res, next) => {
+      let errors = validationResult(req);
+      // console.log(errors);
+      if (!errors.isEmpty()) {
+        let firstError = errors.array().map((error) => error.msg)[0];
+        return res.status(400).json({
+          status: 400,
+          message: firstError,
+          data: {},
+        });
+      }
+      next();
+    },
+  ];
+
+exports.validFullname = [
+    body("fullname").notEmpty().withMessage("Mohon isi Full Name / Merchant!."),
+    (req, res, next) => {
+      let errors = validationResult(req);
+      // console.log(errors);
+      if (!errors.isEmpty()) {
+        let firstError = errors.array().map((error) => error.msg)[0];
+        return res.status(400).json({
+          status: 400,
+          message: firstError,
+          data: {},
+        });
+      }
+      next();
+    },
+  ];
+
+exports.validproseswithdraw = [
+    body("fullname").notEmpty().withMessage("Mohon isi Full Name / Merchant!."),
+    body("tokenfirebase").notEmpty().withMessage("Mohon isi Token!"),
+    body("jumlahpenarikan").notEmpty().withMessage("Mohon isi Jumlah Penarikan!"),
+    (req, res, next) => {
+      let errors = validationResult(req);
+      // console.log(errors);
+      if (!errors.isEmpty()) {
+        let firstError = errors.array().map((error) => error.msg)[0];
+        return res.status(400).json({
+          status: 400,
+          message: firstError,
+          data: {},
+        });
+      }
+      next();
+    },
+];
+
+
+  
+
   

@@ -1,29 +1,91 @@
+const { error, success } = require("../../../helpers/utility/response");
 let express = require("express");
-let { listUserMakanan, addUserMakanan, uploadFotoUserMakanan } = require("../../../controllers/api/tbmerchant/makanan");
-let { validateUserMakanan, validateAddUserMakanan } = require("../../../helpers/validators/tbmerchant/makanan");
-const upload = require("../../../helpers/utility/uploads");
-let {error} = require("../../../helpers/utility/response");
+let { listUserMakanan, addUserMakanan, editUserMakanan, deleteUserMakanan, listUserMakananbyIddevice, NewUserMakanan, editbatchUserMakanan } = require("../../../controllers/api/tbmerchant/makanan");
+let { validateUserMakanan, validateDeleteUserMakanan, validateEditUserMakanan, validateIddevice } = require("../../../helpers/validators/tbmerchant/makanan");
+const uploads = require("../../../helpers/utility/uploads");
+//let {error} = require("../../../helpers/utility/response");
+const multer = require("multer");
+//const upload = multer({ dest: "../../../public/upload/" });
 
 let router = express.Router();
 
-let single = upload("tbmerchant/makanan").any("file");
+const single = uploads("makanan/").any("foto_toko");
 
-router.post("/list",validateUserMakanan, listUserMakanan);
-router.post("/add",validateAddUserMakanan, addUserMakanan);
-router.post("/upload", uploadFotoUserMakanan);
+router.get("/list",validateUserMakanan, listUserMakanan);
+router.get("/listbyiddevice",validateIddevice, listUserMakananbyIddevice);
+//router.post("/add",validateAddUserMakanan, addUserMakanan);
+router.post("/new", (req,res, next) => 
+            single(req, res, (err) => {
+                //console.log(req.file);
+                if(err)
+                {
+                    return res.json({ message: err.message });
+                }
+                next()
+            }),        
+            NewUserMakanan
+);
 
-router.post("/uploadtest",
-    (req,res,next) => {
+router.post("/add", 
+    (req,res, next) => 
+        //console.log(req.file)
+        //validateEditUserMakanan,
         single(req, res, (err) => {
+            //console.log(req.file);
             if(err)
             {
-                return error(req, res, [], err.message);
+                return res.json({ message: err.message });
             }
-            next();
-        });
-    },
-    addUserMakanan
+            next()
+        }),        
+        addUserMakanan
 );
+
+router.post("/edit", 
+
+    (req,res, next) => 
+        single(req, res, (err) => {
+            //console.log(req.file);
+            if(err)
+            {
+                return res.json({ message: err.message });
+            }
+            next()
+        }),        
+        editUserMakanan
+);
+
+router.post("/editbatch", 
+
+    (req,res, next) => 
+        single(req, res, (err) => {
+            //console.log(req.file);
+            if(err)
+            {
+                return res.json({ message: err.message });
+            }
+            next()
+        }),        
+        editbatchUserMakanan
+);
+
+router.post("/delete",validateDeleteUserMakanan, deleteUserMakanan);
+
+
+// function uploadFiles(req, res) {
+//     console.log(req.body);
+//     console.log(req.files);
+//     res.json({ message: "Successfully uploaded files" });
+// }
+
+// router.post("/upload_files", upload.any("files"),
+//     uploadFiles
+// );
+
+// router.post('/post',function(req,res){
+//     console.log(req.body) //you will get your data in this as object.
+//     return success(req, res, req.body, "List Produk Makanan "+req.body.fullname+"", true);
+//   });
 
 // router.post("/login",validUserLogin, getLogin);
 // router.post("/cekkodeLogin", validkodeLogin, cekloginKode);

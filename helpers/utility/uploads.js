@@ -19,7 +19,7 @@ const checkFileType = (file, cb) => {
 const upload = (directory) => {
   const diskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(process.cwd(), "public/" + directory));
+      cb(null, path.join(process.cwd(), "public/upload/tb_merchant/" + directory));
     },
     filename: function (req, file, cb) {
      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));

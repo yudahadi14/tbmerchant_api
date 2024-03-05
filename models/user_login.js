@@ -35,6 +35,14 @@ module.exports = function(sequelize, DataTypes) {
     user_referalcode: {
       type: DataTypes.STRING(100),
       allowNull: true
+    },
+    no_rekening: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    nama_bank: {
+      type: DataTypes.STRING(100),
+      allowNull: true
     }
   }, {
     sequelize,
