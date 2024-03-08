@@ -701,7 +701,7 @@ text: 'That was easy! Your OTP is '+kodee.toString()+''
 
 exports.cekloginKode = (req, res) => {
 
-    let { emailphone, iddevice, kodeotp, idonesignal } = req.body;
+    let { emailphone, iddevice, kodeotp, idonesignal, firebasetoken } = req.body;
 
     if (emailphone != null && idonesignal != null) {
 
@@ -801,6 +801,7 @@ emaill: email,
                                         fk_userlogin: payload[0].user_id || null,
                                         expired_date: moment(new Date(), "YYYY-MM-DD").add(1, 'months') || null,
                                         id_onesignal: idonesignal || null,
+                                        firebasetoken: firebasetoken || null,
                                     })
 .then((userdetail2) => {
                                         if(userdetail2)
@@ -821,6 +822,7 @@ emaill: email,
                                         expired_date: moment(new Date(), "YYYY-MM-DD").add(1, 'months') || null,
                                         update_date: moment(new Date(), "YYYY-MM-DD"),
                                         id_onesignal: idonesignal || null,
+                                        firebasetoken: firebasetoken || null
                                     },{where: {iddevice: iddevice}})
                                     .then((userdetail2) => {
                                         if(userdetail2)
@@ -862,7 +864,7 @@ return success(req, res, payload, "Login Berhasil.", true);
 
 exports.cekLoginIDDevice = (req, res) => {
 
-    let { idonesignal } = req.body;
+    let { idonesignal,firebasetoken } = req.body;
 
     if(idonesignal != null)
     {
@@ -900,6 +902,7 @@ when ul.user_email is null and ul.user_notlp is not null then ul.user_notlp
                     return models.user_devicelog_customer.update({
                         expired_date: moment(new Date(), "YYYY-MM-DD").add(1, 'months') || null,
                         update_date: moment(new Date(), "YYYY-MM-DD"),
+                        firebasetoken: firebasetoken
                     },{where: {id_onesignal: idonesignal}})
                     .then((userdetail2) => {
                         if(userdetail2)
@@ -2516,15 +2519,9 @@ exports.chats = (req, res) => {
         type: QueryTypes.SELECT,
     })
     .then(data => {
-        // const response = getPagingData(data, page, limit);
-        // res.send(response);
         return success(req, res, data, "List Comment Customer", true);
     })
     .catch(err => {
-        // res.status(500).send({
-        //     message:
-//     err.message || "Some error occurred while retrieving tutorials."
-        // });
         return error(req, res, {}, "Error , Silahkan Cobalagi", false, err);
     });
 }
@@ -2538,34 +2535,230 @@ exports.insertchats = (req, res) => {
     if(iscustomer == 1)
     {
         console.log(iscustomer);
-        return models.chats.create({
-            fk_id_customer: custchat || null,
-            //user_email: lis_order_number || null,
-            id_transaksi: produkidheader || null,
-            //user_password: md5(userpass) || null,
-            komentar: komentar || null,
-        })
-            .then((userdetail) => {
-                return success(req, res, userdetail, "List Comment Customer", true);
-            })
-            .catch((err) => {
-                return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
-            });
+        query2 = `
+                select  
+                th.id_customer as user_id
+                from transaction_header th
+                where th.id_transaction_header = :produkidheader
+                `;
+
+
+
+                return models.sequelize
+                    .query(query2, {
+                        replacements: {
+                            produkidheader: produkidheader
+                            // filterSatu: filterSatu,
+                            // filterDua: filterDua,
+                            // filterTiga: filterTiga
+                        },
+                        type: QueryTypes.SELECT,
+                    })
+                    .then(data2 => {
+
+                        if(data2.length > 0)
+                        {
+
+                            return models.chats.create({
+                                fk_id_customer: data2[0].user_id || null,
+                                //user_email: lis_order_number || null,
+                                id_transaksi: produkidheader || null,
+                                //user_password: md5(userpass) || null,
+                                komentar: komentar || null,
+                            })
+                                .then((userdetail) => {
+                    
+                                    query = `
+                                    select 
+                                    udd.firebasetoken
+                                    from chats rt 
+                                    left join transaction_header th on rt.id_transaksi = th.id_transaction_header 
+                                    left join user_login_driver uld on uld.user_id = rt.fk_id_driver 
+                                    left join user_devicelog_driver udd on udd.fk_userlogin = uld.user_id
+                                    where th.id_transaction_header = :produkidheader and udd.is_login = 1 and udd.jenisdokumen = 'LOGIN' order by rt.created_date asc
+                                    `;
+                    
+                    
+                    
+                                    return models.sequelize
+                                        .query(query, {
+                                            replacements: {
+                                                produkidheader: produkidheader
+                                                // filterSatu: filterSatu,
+                                                // filterDua: filterDua,
+                                                // filterTiga: filterTiga
+                                            },
+                                            type: QueryTypes.SELECT,
+                                        })
+                                        .then(data => {
+                    
+                                            const axios = require('axios');
+                                            let datakirim = JSON.stringify({
+                                                "to": "" + data[0].firebasetoken + "",
+                                                "notification": {
+                                                    "body": ""+komentar+"",
+                                                    "title": "Ada Chat Baru"
+                                                },
+                                                "data": {}
+                                            });
+                    
+                                            let config = {
+                                                method: 'post',
+                                                maxBodyLength: Infinity,
+                                                url: 'https://fcm.googleapis.com/fcm/send',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': 'key=AAAAgSEq70U:APA91bH0Tcle3e1LgvOL8tED8lZEfjTcL3nth24TmaY1pV8gK0eyf-v48_gpvCzTM9uHSGzod7QIOEoPVWhvIWZ6G4af7ttqbKhRimnTuIhE4ZtjiCf7g6H-_C1jBzb4VQWfkbsHGXil'
+                                                },
+                                                data: datakirim
+                                            };
+                    
+                                            axios.request(config)
+                                                .then((response) => {
+                                                    console.log(response);
+                                                    return success(req, res, data, "List Comment Customer", true);
+                    
+                                                })
+                                                .catch((error) => {
+                                                    return success(req, res, data, "List Comment Customer", true);
+                                                });
+                                            
+                                        })
+                                        .catch(err => {
+                                            return error(req, res, {}, "Error , Silahkan Cobalagi", false, err);
+                                        });
+                    
+                                    
+                                    
+                                })
+                                .catch((err) => {
+                                    return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
+                                });
+
+                        }else{
+                            return error(req, res, {}, "Gagal Silahkan Cobalagi", false, false);
+                        }
+
+                        
+
+                    })
+                    .catch((err) => {
+                        return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
+                    });
+
+
+        
 
     }else{
-        return models.chats.create({
-            fk_id_driver: custchat || null,
-            //user_email: lis_order_number || null,
-            id_transaksi: produkidheader || null,
-            //user_password: md5(userpass) || null,
-            komentar: komentar || null,
-        })
-            .then((userdetail) => {
-                return success(req, res, userdetail, "List Comment Customer", true);
-            })
-            .catch((err) => {
-                return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
-            });
+
+        query2 = `
+                select 
+                th.id_driver as user_id
+                from transaction_header th
+                where th.id_transaction_header = :produkidheader
+                `;
+
+
+
+                return models.sequelize
+                    .query(query2, {
+                        replacements: {
+                            produkidheader: produkidheader
+                            // filterSatu: filterSatu,
+                            // filterDua: filterDua,
+                            // filterTiga: filterTiga
+                        },
+                        type: QueryTypes.SELECT,
+                    })
+                    .then(data2 => {
+
+                        if(data2.length > 0)
+                        {
+
+                            return models.chats.create({
+                                fk_id_driver: data2[0].user_id || null,
+                                //user_email: lis_order_number || null,
+                                id_transaksi: produkidheader || null,
+                                //user_password: md5(userpass) || null,
+                                komentar: komentar || null,
+                            })
+                                .then((userdetail) => {
+                                    query = `
+                                    select 
+                                    udd.firebasetoken
+                                    from chats rt 
+                                    left join transaction_header th on rt.id_transaksi = th.id_transaction_header 
+                                    left join user_login_customer ulc on ulc.user_id = rt.fk_id_customer
+                                    left join user_devicelog_customer udd on udd.fk_userlogin = ulc.user_id
+                                    where th.id_transaction_header = :produkidheader and udd.is_login = 1 and udd.jenisdokumen = 'LOGIN' and firebasetoken is not null  order by rt.created_date asc limit 1
+                                    `;
+                    
+                    
+                    
+                                    return models.sequelize
+                                        .query(query, {
+                                            replacements: {
+                                                produkidheader: produkidheader
+                                                // filterSatu: filterSatu,
+                                                // filterDua: filterDua,
+                                                // filterTiga: filterTiga
+                                            },
+                                            type: QueryTypes.SELECT,
+                                        })
+                                        .then(data => {
+                    
+                                            const axios = require('axios');
+                                            let datakirim = JSON.stringify({
+                                                "to": "" + data[0].firebasetoken + "",
+                                                "notification": {
+                                                    "body": ""+komentar+"",
+                                                    "title": "Ada Chat Baru"
+                                                },
+                                                "data": {}
+                                            });
+                    
+                                            let config = {
+                                                method: 'post',
+                                                maxBodyLength: Infinity,
+                                                url: 'https://fcm.googleapis.com/fcm/send',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': 'key=AAAA-vf3vjY:APA91bEDypZi1imDltIuJSa5vnfUq1EHDA8rLnWN3-TWs0laad4y8GQEzjtlcIIQ_ZgCI-6yPKIilSJ2LwpYZEoDFYw4nfPvTrAQNQMqKo6Si6k3cwlgOQqTULDpmXVlH5izHZP2dPH1'
+                                                },
+                                                data: datakirim
+                                            };
+                    
+                                            axios.request(config)
+                                                .then((response) => {
+                                                    console.log(response);
+                                                    return success(req, res, data, "List Comment Customer", true);
+                    
+                                                })
+                                                .catch((error) => {
+                                                    return success(req, res, data, "List Comment Customer", true);
+                                                });
+                                            
+                                        })
+                                        .catch(err => {
+                                            return error(req, res, {}, "Error , Silahkan Cobalagi", false, err);
+                                        });
+                                })
+                                .catch((err) => {
+                                    return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
+                                });
+
+                        }else{
+                            return error(req, res, {}, "Gagal Silahkan Cobalagi", false, false);
+                        }
+
+                        
+
+                    })
+                    .catch((err) => {
+                        return error(req, res, {}, "Gagal Silahkan Cobalagi", false, err);
+                    });
+
+        
     }
 }
 

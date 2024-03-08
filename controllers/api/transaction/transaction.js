@@ -115,6 +115,61 @@ exports.listproduk = (req, res) => {
         where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
         LIMIT :limitt OFFSET :offsett
         `;
+    }else if(kategori_id == 8)
+    {
+        // table = 'product_matrial';
+        query = `select * ,
+        ( select sum(nilai) / (select count(lineid) from ratings where fk_id_merchant = pm.prod_id_header) as ratingg
+        from ratings r where fk_id_merchant = pm.prod_id_header
+        ) as ratingg FROM product_olahraga pm
+        left join product_header ph on ph.prod_id  = pm.prod_id_header
+        where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
+        LIMIT :limitt OFFSET :offsett
+        `;
+    }else if(kategori_id == 9)
+    {
+        // table = 'product_matrial';
+        query = `select * ,
+        ( select sum(nilai) / (select count(lineid) from ratings where fk_id_merchant = pm.prod_id_header) as ratingg
+        from ratings r where fk_id_merchant = pm.prod_id_header
+        ) as ratingg FROM product_ibubayi pm
+        left join product_header ph on ph.prod_id  = pm.prod_id_header
+        where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
+        LIMIT :limitt OFFSET :offsett
+        `;
+    }else if(kategori_id == 10)
+    {
+        // table = 'product_matrial';
+        query = `select * ,
+        ( select sum(nilai) / (select count(lineid) from ratings where fk_id_merchant = pm.prod_id_header) as ratingg
+        from ratings r where fk_id_merchant = pm.prod_id_header
+        ) as ratingg FROM product_atk pm
+        left join product_header ph on ph.prod_id  = pm.prod_id_header
+        where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
+        LIMIT :limitt OFFSET :offsett
+        `;
+    }else if(kategori_id == 11)
+    {
+        // table = 'product_matrial';
+        query = `select * ,
+        ( select sum(nilai) / (select count(lineid) from ratings where fk_id_merchant = pm.prod_id_header) as ratingg
+        from ratings r where fk_id_merchant = pm.prod_id_header
+        ) as ratingg FROM product_mainananak pm
+        left join product_header ph on ph.prod_id  = pm.prod_id_header
+        where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
+        LIMIT :limitt OFFSET :offsett
+        `;
+    }else if(kategori_id == 12)
+    {
+        // table = 'product_matrial';
+        query = `select * ,
+        ( select sum(nilai) / (select count(lineid) from ratings where fk_id_merchant = pm.prod_id_header) as ratingg
+        from ratings r where fk_id_merchant = pm.prod_id_header
+        ) as ratingg FROM product_officialstore pm
+        left join product_header ph on ph.prod_id  = pm.prod_id_header
+        where pm.prod_id_header = :idheader and pm.produk_nama like :namaproduk
+        LIMIT :limitt OFFSET :offsett
+        `;
     }
 
 
@@ -191,6 +246,16 @@ exports.listprodukheader = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select max(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select max(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select max(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select max(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select max(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select max(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamax,
     case
@@ -208,6 +273,16 @@ exports.listprodukheader = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select min(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select min(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select min(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select min(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select min(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select min(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamin
     FROM product_header ph
@@ -294,6 +369,16 @@ exports.listprodukheaderall = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select max(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select max(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select max(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select max(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select max(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select max(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamax,
     case
@@ -311,6 +396,16 @@ exports.listprodukheaderall = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select min(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select min(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select min(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select min(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select min(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select min(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamin
     FROM product_header ph
@@ -396,6 +491,16 @@ exports.listprodukheadermaps = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select max(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select max(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select max(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select max(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select max(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select max(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamax,
     case
@@ -413,6 +518,16 @@ exports.listprodukheadermaps = (req, res) => {
         from product_fashion pm where pm.prod_id_header = ph.prod_id)
         when ph.kategori_id = 7 then (select min(pm.produk_harga)
         from product_matrial pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 8 then (select min(pm.produk_harga)
+        from product_olahraga pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 9 then (select min(pm.produk_harga)
+        from product_ibubayi pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 10 then (select min(pm.produk_harga)
+        from product_atk pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 11 then (select min(pm.produk_harga)
+        from product_mainananak pm where pm.prod_id_header = ph.prod_id)
+        when ph.kategori_id = 12 then (select min(pm.produk_harga)
+        from product_officialstore pm where pm.prod_id_header = ph.prod_id)
         else 0
     end as hargamin
     FROM product_header ph
