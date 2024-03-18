@@ -2596,7 +2596,7 @@ exports.caridriver = (req, res) => {
     
                                                 }else{
     
-                                                    return error(req, res, {}, "Driver Tidak Ditemukan, Cari Kembali", false, err);
+                                                    return error(req, res, {}, "Driver Tidak Ditemukan, Cari Kembali", false, false);
     
                                                 }
     
@@ -2610,7 +2610,7 @@ exports.caridriver = (req, res) => {
     
     
             }else{
-                return error(req, res, {}, "Driver Tidak Ditemukan, Cari Kembali", false, err);
+                return error(req, res, {}, "Driver Tidak Ditemukan, Cari Kembali", false, false);
             }
         }
 

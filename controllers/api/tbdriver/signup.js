@@ -550,7 +550,7 @@ exports.cekLoginIDDevice = (req, res) => {
         ul.*,
         ud.*,
         (select th.id_transaction_header from production_tolongbeliin.transaction_header th where th.id_driver = ul.user_id
-            and th.id_transaction_status in (0,1,2,3,4)
+            and th.id_transaction_status in (0,1,2,3,4) limit 1
         ) as transaksi
         from user_login_driver ul
                 left join user_devicelog_driver ud on ud.fk_userlogin = ul.user_id
